@@ -17,9 +17,9 @@ class Simulation_Q():
 
 class Event:
 
-    def __init__(self, sim_q: Simulation_Q, time_now: int):
+    def __init__(self, sim_q: Simulation_Q, create_time: int):
         self.sim_q = sim_q
-        self.time_now = time_now
+        self.create_time = create_time
         self.__enqueue__()
 
     def __enqueue__(self):
@@ -32,18 +32,18 @@ class Event:
 class E_new_req(Event):
     def __enqueue__(self):
         self.size = np.random.pareto(PARETO_PROCESS_NEW_FILE_SIZE_A)        
-        self.process_time = self.time_now + (self.size/INSTITUTIONAL_BANDWIDTH)
+        self.process_time = self.create_time + (self.size/INSTITUTIONAL_BANDWIDTH)
         self.sim_q.push([self.process_time,self])
 
 
 class E_get_new_reqs(Event):
 
     def __enqueue__(self):
-        self.process_time = self.time_now
+        self.process_time = self.create_time
         self.sim_q.push([self.process_time,self])
 
     def process(self):
         reqs_to_handle = np.random.poisson(POISSON_PROCESS_NEW_REQUESTS_LAMBDA)
         for i in reqs_to_handle:
-            E_new_req(self.sim_q,self.time_now)
+            E_new_req(self.sim_q,self.create_time)
 
