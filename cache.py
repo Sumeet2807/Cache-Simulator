@@ -132,3 +132,89 @@ class LRU_Cache(Cache):
             file_list.append(node.id)
             node = node.next
         return file_list
+
+
+
+class MRU_Cache(Cache):
+    
+    def __subclass_declarations__(self):
+        self.mru_root = None
+        # self.lru_tail = None
+        self.hit_counter = 0
+
+    def file_present(self,file_index):
+        if file_index in self.store:
+            file = self.store[file_index]
+            # self.hit_counter += 1
+
+            if file.prev is not None:                
+                file.prev.next = file.next
+                if file.next is not None:
+                    file.next.prev = file.prev
+
+                file.next = self.mru_root
+                self.mru_root.prev = file
+                self.mru_root = file
+                self.mru_root.prev = None
+                
+            file.hits += 1
+            
+            print(file_index,'R',self.get_mru_list())
+            return True
+        return False
+
+
+    def add_file(self,file_index):    
+        if self.all_files.size[file_index] > CACHE_MAX_ALLOWED_FILE_SIZE or self.all_files.size[file_index] > CACHE_CAPACITY:
+            return False  
+        if file_index not in self.store:
+            file = LRU_File(file_index,self.all_files.size[file_index]) 
+            # if increment_counter:
+            #     self.hit_counter += 1
+            if self.storage_left > self.all_files.size[file_index]:
+
+                if self.mru_root is None:
+                    self.mru_root = file
+                else:
+                    file.next = self.mru_root
+                    self.mru_root.prev = file
+                    self.mru_root = file
+                    self.mru_root.prev = None
+                self.store[file.id] = file
+                self.storage_left -= file.size
+                file.hits += 1
+
+            else:
+                while(self.storage_left <= file.size):
+                    if self.mru_root is None:
+                        raise Exception('LRU Cache - Storage inconsistency')                       
+
+                    file_to_discard = self.mru_root
+                    self.mru_root = file_to_discard.next
+                    if self.mru_root is not None:
+                        self.mru_root.prev = None
+                    del self.store[file_to_discard.id]
+                    self.storage_left += file_to_discard.size
+                self.add_file(file_index)
+
+            print(file_index,'W',self.get_mru_list(),file.size)  
+        else:
+            self.file_present(file_index)        
+        
+        return True
+
+
+
+    def get_stored_file_list(self):
+        file_list = []
+        for key in self.store:
+            file_list.append([self.store[key].id,self.store[key].hits])
+        return file_list
+
+    def get_mru_list(self):
+        file_list = []
+        node = self.mru_root
+        while(node is not None):
+            file_list.append(node.id)
+            node = node.next
+        return file_list
