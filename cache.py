@@ -159,7 +159,7 @@ class MRU_Cache(Cache):
                 
             file.hits += 1
             
-            print(file_index,'R',self.get_mru_list())
+            # print(file_index,'R',self.get_mru_list())
             return True
         return False
 
@@ -197,7 +197,7 @@ class MRU_Cache(Cache):
                     self.storage_left += file_to_discard.size
                 self.add_file(file_index)
 
-            print(file_index,'W',self.get_mru_list(),file.size)  
+            # print(file_index,'W',self.get_mru_list(),file.size)  
         else:
             self.file_present(file_index)        
         

@@ -85,9 +85,8 @@ class E_arrive_at_queue(Event):
         self.sim.sim_q.push([self.process_time,self])
 
     def process(self):
-        if len(self.sim.fifo):
-            self.sim.fifo.append(self)
-        else:
+        self.sim.fifo.append(self)
+        if len(self.sim.fifo) < 2:
             E_depart_from_queue(self.sim,self.process_time,self)
 
 
@@ -97,11 +96,17 @@ class E_depart_from_queue(Event):
         initial_req = self.get_super_parent()
         self.process_time = self.create_time + (initial_req.file_size/ACCESS_LINK_BANDWIDTH)
         self.sim.sim_q.push([self.process_time,self])
+        self.queue_delay = 0
+        if isinstance(self.parent, E_arrive_at_queue):
+            self.queue_delay = self.create_time - self.parent.process_time
+            # print(self.queue_delay)
+        self.sim.queue_delays.append(self.queue_delay)
+
 
     def process(self):
         initial_req = self.get_super_parent()
         self.sim.cache.add_file(initial_req.file_index)
         E_file_recieved(self.sim,self.process_time,self)
+        self.sim.fifo.pop(0)
         if len(self.sim.fifo):
-            event = self.sim.fifo.pop(0)
-            E_depart_from_queue(self.sim,self.process_time,event)
+            E_depart_from_queue(self.sim,self.process_time,self.sim.fifo[0])

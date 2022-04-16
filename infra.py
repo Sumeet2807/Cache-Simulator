@@ -24,7 +24,7 @@ class Simulation_Q():
 
 
 class Simulator_Env():
-    def __init__(self, Files:Files, Cache, cache_init_files=[]):
+    def __init__(self, Files:Files, Cache:Cache, cache_init_files=[]):
 
         self.sim_q = Simulation_Q()
         self.files = Files
@@ -32,6 +32,7 @@ class Simulator_Env():
         self.fifo = []
         self.log = []
         self.req_count = 0
+        self.queue_delays = []
     
     def get_total_times_for_reqs(self):
         return(np.array(self.log)[:,0])
@@ -48,33 +49,3 @@ class Simulator_Env():
             print('total time - ' + str(data[0]))
             print(path)
             print(' ')
-
-
-class Event:
-
-    def __init__(self, sim: Simulator_Env, create_time: int, parent:object=None):
-        self.sim = sim
-        self.create_time = create_time
-        self.process_time = create_time
-        self.parent = parent
-        self.name = 'Event'
-        self.__enqueue__()
-
-    def get_super_parent(self):
-        node = self
-        while(node.parent is not None):
-            node = node.parent
-        return node
-
-    def __lt__(self,any):
-        return True
-
-    def __gt__(self,any):
-        return True
-
-    def __enqueue__(self):
-        pass
-
-
-    def process(self):
-        pass
