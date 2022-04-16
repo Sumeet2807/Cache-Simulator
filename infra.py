@@ -24,7 +24,7 @@ class Simulation_Q():
 
 
 class Simulator_Env():
-    def __init__(self, Files:Files, Cache:Cache, cache_init_files=[]):
+    def __init__(self, Files:Files, Cache, cache_init_files=[]):
 
         self.sim_q = Simulation_Q()
         self.files = Files
