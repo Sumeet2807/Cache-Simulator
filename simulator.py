@@ -8,7 +8,7 @@ import numpy as np
 # initialize simulator environment
 # np.random.seed(11)
 files = Files()
-cache = LRU_Cache(files)
+cache = LFU_Cache(files)
 # cache = Cache(files)
 
 sim = Simulator_Env(files,cache)

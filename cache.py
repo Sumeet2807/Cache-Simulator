@@ -218,3 +218,60 @@ class MRU_Cache(Cache):
             file_list.append(node.id)
             node = node.next
         return file_list
+
+
+
+
+class LFU_Cache(Cache):
+    
+    def __subclass_declarations__(self):
+        self.frequency_list = []
+
+    def file_present(self,file_index):
+        if file_index in self.store:
+            self.store[file_index] += 1
+            return True
+        return False
+
+
+    def add_file(self,file_index):    
+        if self.all_files.size[file_index] > CACHE_MAX_ALLOWED_FILE_SIZE or self.all_files.size[file_index] > CACHE_CAPACITY:
+            return False  
+        if file_index not in self.store:
+            if self.storage_left > self.all_files.size[file_index]:
+                self.store[file_index] = 1
+
+            else:
+                while(self.storage_left <= self.all_files.size[file_index]):
+                    key = self.get_least_frequency_key()
+                    del self.store[key]
+                    self.storage_left += self.all_files.size[key]
+                self.add_file(file_index)
+        else:
+            self.file_present(file_index)        
+        
+        return True
+
+    def get_least_frequency_key(self):
+        least_key = None
+        for key in self.store:
+            if least_key is None:
+                least_key = key
+            else:
+                if self.store[least_key] > self.store[key]:
+                    least_key = key
+        return least_key
+
+    def get_stored_file_list(self):
+        file_list = []
+        for key in self.store:
+            file_list.append([self.store[key].id,self.store[key].hits])
+        return file_list
+
+    def get_mru_list(self):
+        file_list = []
+        node = self.mru_root
+        while(node is not None):
+            file_list.append(node.id)
+            node = node.next
+        return file_list
