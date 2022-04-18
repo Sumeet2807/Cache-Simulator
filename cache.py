@@ -240,6 +240,7 @@ class LFU_Cache(Cache):
         if file_index not in self.store:
             if self.storage_left > self.all_files.size[file_index]:
                 self.store[file_index] = 1
+                self.storage_left -= self.all_files.size[file_index]
 
             else:
                 while(self.storage_left <= self.all_files.size[file_index]):
