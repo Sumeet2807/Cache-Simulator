@@ -33,6 +33,18 @@ class Cache():
                 return False
         return True
 
+class No_Cache(Cache):
+    
+    def __subclass_declarations__(self):
+        pass
+
+    def file_present(self,file_index):
+        return False
+
+
+    def add_file(self,file_index):
+        return False
+
 
 class LRU_File():
     def __init__(self,file_index,file_size):

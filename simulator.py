@@ -6,9 +6,11 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+fig,axs = plt.subplots(2,2,figsize=(7,4))
+axs = list(axs[0]) + list(axs[1])
+ax_counter = 0
 
-
-cache_types = [Cache,LFU_Cache,LRU_Cache,MRU_Cache]
+cache_types = [No_Cache,LFU_Cache,LRU_Cache,MRU_Cache]
 for cache_type in cache_types:
     total_times = []
     queue_delays = []
@@ -16,7 +18,6 @@ for cache_type in cache_types:
     for iteration in range(SIMULATOR_ITERATIONS):
 
         # initialize simulator environment
-        # np.random.seed(11)
         files = Files()
         cache = cache_type(files)
         # cache = Cache(files)
@@ -43,11 +44,17 @@ for cache_type in cache_types:
     print('Average number of req served during simulations - ' + str(np.mean(req_served)))
     print('Average Response rate for the requests - ' + str(np.mean(total_times)))
     print('Average Queue delay in the process - ' + str(np.mean(queue_delays)))
-    p = sns.histplot(data=total_times,kde=True)
+    p = sns.histplot(data=total_times,kde=True,ax=axs[ax_counter])
+    ax_counter += 1
     p.set_xlabel('time(sec)')
-    # p.set_xlim(0,10)
+    p.set_title(cache.__class__.__name__)\
 
-    plt.show()
     print('\n')
     print('*********************XXXXXXXXXXXXXX*********************')
     print('\n')
+
+    
+plt.show()
+a = input('Press a key to exit')
+if a:
+    exit(0)
