@@ -5,9 +5,9 @@ import numpy as np
 
 class Files:
     def __init__(self):
-        self.popularity = np.random.pareto(PARETO_PROCESS_FILE_POPULARITY_A,size=TOTAL_NO_OF_FILES)
+        self.popularity = pareto(PARETO_PROCESS_FILE_POPULARITY_A, PARETO_PROCESS_FILE_POPULARITY_M, TOTAL_NO_OF_FILES)
         self.popularity = self.popularity/np.sum(self.popularity)
-        self.size = np.random.pareto(PARETO_PROCESS_NEW_FILE_SIZE_A,size=TOTAL_NO_OF_FILES)
+        self.size = pareto(PARETO_PROCESS_NEW_FILE_SIZE_A, PARETO_PROCESS_NEW_FILE_SIZE_M, TOTAL_NO_OF_FILES)
 
 
 
@@ -49,3 +49,7 @@ class Simulator_Env():
             print('total time - ' + str(data[0]))
             print(path)
             print(' ')
+
+
+def pareto(a,m,samples):
+    return((np.random.pareto(a, samples) + 1) * m)
