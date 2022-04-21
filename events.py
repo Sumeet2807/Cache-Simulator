@@ -1,6 +1,5 @@
 import heapq as h
 import numpy as np
-from parameters import *
 from infra import *
 
 
@@ -68,7 +67,7 @@ class E_file_recieved(Event):
         self.name = 'File recieved'
         initial_req = self.get_super_parent()
         file_size = self.sim.files.size[initial_req.file_index]
-        self.process_time = self.create_time + (file_size/ INSTITUTIONAL_BANDWIDTH)
+        self.process_time = self.create_time + (file_size/ self.sim.institutional_bandwidth)
         self.sim.sim_q.push([self.process_time,self])
 
     def process(self):
@@ -80,12 +79,13 @@ class E_file_recieved(Event):
 class E_arrive_at_queue(Event):
     def __enqueue__(self):
         self.name = 'Arrive at queue'
-        self.process_time = self.create_time + np.random.lognormal(LOGNORMAL_PROCESS_ARRIVE_AT_QUEUE_MEAN,
-                                                                    LOGNORMAL_PROCESS_ARRIVE_AT_QUEUE_SIGMA)
+        self.process_time = self.create_time + np.random.lognormal(self.sim.lognormal_mean,
+                                                                    self.sim.lognormal_sigma)
         
         self.sim.sim_q.push([self.process_time,self])
 
     def process(self):
+        self.sim.fifo_size.append(len(self.sim.fifo))
         self.sim.fifo.append(self)
         if len(self.sim.fifo) < 2:
             E_depart_from_queue(self.sim,self.process_time,self)
@@ -95,7 +95,7 @@ class E_depart_from_queue(Event):
     def __enqueue__(self):
         self.name = 'Depart from queue'
         initial_req = self.get_super_parent()
-        self.process_time = self.create_time + (initial_req.file_size/ACCESS_LINK_BANDWIDTH)
+        self.process_time = self.create_time + (initial_req.file_size/self.sim.access_link_bandwidth)
         self.sim.sim_q.push([self.process_time,self])
         self.queue_delay = 0
         if isinstance(self.parent, E_arrive_at_queue):

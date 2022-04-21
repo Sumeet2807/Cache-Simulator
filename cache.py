@@ -180,7 +180,7 @@ class MRU_Cache(Cache):
 
 
     def add_file(self,file_index):    
-        if self.all_files.size[file_index] > CACHE_MAX_ALLOWED_FILE_SIZE or self.all_files.size[file_index] > CACHE_CAPACITY:
+        if self.all_files.size[file_index] > self.max_file_size or self.all_files.size[file_index] > self.capacity:
             return False  
         if file_index not in self.store:
             file = LRU_File(file_index,self.all_files.size[file_index]) 
@@ -250,7 +250,7 @@ class LFU_Cache(Cache):
 
 
     def add_file(self,file_index):    
-        if self.all_files.size[file_index] > CACHE_MAX_ALLOWED_FILE_SIZE or self.all_files.size[file_index] > CACHE_CAPACITY:
+        if self.all_files.size[file_index] > self.max_file_size or self.all_files.size[file_index] > self.capacity:
             return False  
         if file_index not in self.store:
             if self.storage_left > self.all_files.size[file_index]:
