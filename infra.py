@@ -4,10 +4,10 @@ import heapq as h
 import numpy as np
 
 class Files:
-    def __init__(self):
-        self.popularity = pareto(PARETO_PROCESS_FILE_POPULARITY_A, PARETO_PROCESS_FILE_POPULARITY_M, TOTAL_NO_OF_FILES)
+    def __init__(self,ppa,ppm,pfa,pfm):
+        self.popularity = pareto(ppa, ppm, TOTAL_NO_OF_FILES)
         self.popularity = self.popularity/np.sum(self.popularity)
-        self.size = pareto(PARETO_PROCESS_NEW_FILE_SIZE_A, PARETO_PROCESS_NEW_FILE_SIZE_M, TOTAL_NO_OF_FILES)
+        self.size = pareto(pfa, pfm, TOTAL_NO_OF_FILES)
 
 
 

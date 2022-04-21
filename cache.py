@@ -4,11 +4,14 @@ from infra import *
 class Cache():
     def __init__(self,
     all_files:Files,
-    init_file_list=[]):
+    init_file_list=[],
+    capacity=100,
+    max_file_size=100):
 
-        self.capacity = CACHE_CAPACITY
+        self.capacity = capacity
+        self.max_file_size = max_file_size
         self.store = {}
-        self.storage_left = CACHE_CAPACITY
+        self.storage_left = capacity
         self.all_files = all_files
         self.__subclass_declarations__()
         for i in range(len(init_file_list)):
@@ -88,7 +91,7 @@ class LRU_Cache(Cache):
 
 
     def add_file(self,file_index):    
-        if self.all_files.size[file_index] > CACHE_MAX_ALLOWED_FILE_SIZE or self.all_files.size[file_index] > CACHE_CAPACITY:
+        if self.all_files.size[file_index] > self.max_file_size or self.all_files.size[file_index] > self.capacity:
             return False  
         if file_index not in self.store:
             file = LRU_File(file_index,self.all_files.size[file_index]) 

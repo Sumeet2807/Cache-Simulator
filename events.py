@@ -6,11 +6,12 @@ from infra import *
 
 class Event:
 
-    def __init__(self, sim: Simulator_Env, create_time: int, parent:object=None):
+    def __init__(self, sim: Simulator_Env, create_time: int, parent:object=None,requestrate=100):
         self.sim = sim
         self.create_time = create_time
         self.process_time = create_time
         self.parent = parent
+        self.requestrate = requestrate
         self.name = 'Event'
         self.__enqueue__()
 
@@ -41,7 +42,7 @@ class E_get_new_reqs(Event):
         self.sim.sim_q.push([self.process_time,self])
 
     def process(self):
-        reqs_to_handle = np.random.poisson(POISSON_PROCESS_NEW_REQUESTS_LAMBDA)
+        reqs_to_handle = np.random.poisson(self.requestrate)
         for i in range(int(reqs_to_handle)):
             E_new_req(self.sim, self.process_time)
 
